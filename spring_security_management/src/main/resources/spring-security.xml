@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+    <!--Spring-Security 配置文件的相关约束-->
+
+    <!--释放静态资源  pattern: 释放的路径 security: 没有 安全-->
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/plugins/**" security="none"/>
+    <security:http pattern="/favicon.ico" security="none"/>
+    <security:http pattern="/blue@2x.png" security="none"/>
+    <security:http pattern="/failer.jsp" security="none"/>
+
+    <!--配置 Spring-Security 过滤器-->
+    <!--
+          auto-config="true": 表示自动加载 Spring-Security权限控制 的配置文件
+          use-expressions="true": 表示使用 Spring 的 el 表达式来配置 Spring-Security 权限控制
+    -->
+    <security:http auto-config="true" use-expressions="true">
+
+        <!--1: 让认证页面可以匿名访问 pattern="/login.jsp": 指定认证地址 access="permitAll()": 表示可以通过全部页面访问-->
+        <security:intercept-url pattern="/login.jsp" access="permitAll()"/>
+
+        <!--2: 拦截权限资源-->
+        <!--
+           intercept-url: 拦截地址
+           pattern="/**":  表示路径  拦截所有文件
+           hasAnyRole(ROLE_USER)": 表示 ROLE_USER 角色才能访问资源
+        -->
+        <security:intercept-url pattern="/**" access="hasAnyRole('ROLE_USER')"/>
+
+
+        <!--3: 指定自定义配置权限认证信息 请求 跳转-->
+        <!--
+           login-page="/login.jsp": 表示指定当前的登录页面
+           login-processing-url="/login" : 表示登录处理网址页面
+           default-target-url="/index.jsp": 表示默认目标网址页面
+           authentication-failure-url="/failer.jsp": 表示认证失败URL页面
+        -->
+        <security:form-login login-page="/login.jsp"
+                             login-processing-url="/login"
+                             default-target-url="/index.jsp"
+                             authentication-failure-url="/failer.jsp"/>
+
+        <!--4: 配置退出登录后跳转的页面-->
+        <!--
+            logout-url="/login": 表示注销的地址
+            logout-success-url="/login.jsp" : 表示注销成功的页面
+        -->
+        <security:logout logout-url="/logout"
+                         logout-success-url="/login.jsp"/>
+
+
+        <!--4: 禁用csrf防护机制-->
+        <!--<security:csrf disabled="true"/>-->
+
+    </security:http>
+
+    <!--通过Spring-Security 加盐加密随机盐 把加密对象放入 IOC容器中-->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+    <!-- 模拟 设置Spring Security认证用户信息的来源 存储到内存中的数据-->
+    <!--
+        Spring-Security 默认权限认证必须要加密的 加上{noop}: 表示不加密认证
+        user-service-ref="userServiceImpl": 默认认证的参数地址
+    -->
+    <security:authentication-manager>
+        <!--动态 username-->
+        <security:authentication-provider user-service-ref="userServiceImpl">
+        <!--动态随机加盐加密-->
+        <security:password-encoder ref="passwordEncoder"/>
+
+            <!--<security:user-service>-->
+                <!--<security:user name="user" password="{noop}user"-->
+                               <!--authorities="ROLE_USER"/>-->
+                <!--<security:user name="admin" password="{noop}admin"-->
+                               <!--authorities="ROLE_ADMIN"/>-->
+            <!--</security:user-service>-->
+
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+</beans>
+
+
+
+
+
+
+
+
+
