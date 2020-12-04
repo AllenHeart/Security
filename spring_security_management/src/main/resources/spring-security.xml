@@ -66,12 +66,22 @@
 
 
         <!--4: 禁用csrf防护机制-->
-        <!--<security:csrf disabled="true"/>-->
+        <security:csrf disabled="true"/>
+
+        <!--
+            remember-me: 开启用户在浏览器 cookies存储的 remember me过滤器，设置token存储时间为60秒
+            data-source-ref="dataSource" 指定数据库连接池
+            remember-me-parameter="remember-me" 指定记住的参数名 可省略
+        -->
+        <security:remember-me
+                data-source-ref="dataSource"
+                token-validity-seconds="60"
+                remember-me-parameter="remember-me" />
 
     </security:http>
 
     <!--通过Spring-Security 加盐加密随机盐 把加密对象放入 IOC容器中-->
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <!-- 模拟 设置Spring Security认证用户信息的来源 存储到内存中的数据-->
     <!--
@@ -81,14 +91,14 @@
     <security:authentication-manager>
         <!--动态 username-->
         <security:authentication-provider user-service-ref="userServiceImpl">
-        <!--动态随机加盐加密-->
-        <security:password-encoder ref="passwordEncoder"/>
+            <!--动态随机加盐加密-->
+            <security:password-encoder ref="passwordEncoder"/>
 
             <!--<security:user-service>-->
-                <!--<security:user name="user" password="{noop}user"-->
-                               <!--authorities="ROLE_USER"/>-->
-                <!--<security:user name="admin" password="{noop}admin"-->
-                               <!--authorities="ROLE_ADMIN"/>-->
+            <!--<security:user name="user" password="{noop}user"-->
+            <!--authorities="ROLE_USER"/>-->
+            <!--<security:user name="admin" password="{noop}admin"-->
+            <!--authorities="ROLE_ADMIN"/>-->
             <!--</security:user-service>-->
 
         </security:authentication-provider>

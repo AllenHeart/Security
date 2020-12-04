@@ -91,7 +91,14 @@ public class UserServiceImpl implements UserService {
             }
 
             //定义 动态的 username password 封装对象
-            UserDetails userDetails = new User(sysUser.getUsername(),sysUser.getPassword(),authorities);
+            UserDetails userDetails = new User(
+                    sysUser.getUsername(), //存储到数据用户名称
+                    sysUser.getPassword(),  //用户密码
+                    sysUser.getStatus()==1, //设置用户的状态 是否可用 有 false 就不能用该账户
+                    true, //账号是否失效
+                    true,//密码是否失效
+                    true,//账户是否锁定
+                    authorities);
             return userDetails;
         } catch (Exception e) {
             //异常日志打印
