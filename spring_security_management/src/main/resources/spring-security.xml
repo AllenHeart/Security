@@ -78,10 +78,17 @@
                 token-validity-seconds="60"
                 remember-me-parameter="remember-me" />
 
+
+        <!--处理权限不足 跳转到友好 403 异常页面  固定的方式单一 不推荐使用 -->
+        <!--<security:access-denied-handler error-page="/403.jsp"/>-->
+
     </security:http>
+
 
     <!--通过Spring-Security 加盐加密随机盐 把加密对象放入 IOC容器中-->
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+
 
     <!-- 模拟 设置Spring Security认证用户信息的来源 存储到内存中的数据-->
     <!--

@@ -38,6 +38,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <!--Spring声明式注解支持-->
     <tx:annotation-driven/>
 
     <!--引入 Spring-Security 的配置文件当 Spring 工程启动会来加载到权限认证文件 -->
